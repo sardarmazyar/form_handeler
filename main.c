@@ -5,12 +5,43 @@
 #include <stdlib.h>
 #include <curses.h>
 
-
 #define form_len 1000
 #define name_len 100
 
 char **list_forms;
 int n_forms=0;
+void read_form(FILE *fp){
+    int n, size_numbers[4];
+    char str[name_len];
+    fscanf(fp,"%d",&n);
+    WINDOW *win[n];
+    for (int i=0; i<n; i++){
+        fgets(str,name_len,fp);
+        if (!(strcmp(str,"border")) && !(strcmp(str,"textbox")) && !(strcmp(str,"label"))){
+            fscanf(fp,"%d %d %d %d", &size_numbers[0],&size_numbers[1],&size_numbers[2],&size_numbers[3]);
+            win[i]= newwin(size_numbers[0],size_numbers[1],size_numbers[2],size_numbers[3]);
+            fgets(str,name_len,fp);
+            if (!strcmp(str,"normal"))
+                box(win[i],0,0);
+            else if (!strcmp(str,"none"))
+                ;
+            else
+                box(win[i],str[0],str[0]);
+        }
+        if (!(strcmp(str,"label"))){
+            fgets(str,name_len,fp);
+            wprintw(win[i],str);
+        }
+        else if (!(strcmp(str,"border"))){
+            ;
+        }
+        else if (!(strcmp(str,"border"))){
+            ;
+        }
+
+
+    }
+}
 void read_forms(){
     list_forms = (char**) malloc(form_len * sizeof(char*));
     for(int i=0; i<form_len; i++)
@@ -30,6 +61,9 @@ int print_forms(){
     for (int i=0;i<n_forms;i++)
         printw("%s\n",list_forms[i]);
     return 1;
+}
+int design_form(FILE *fp){
+    read_form(fp);
 }
 int new_form(){
     printw("choose a name form your form:\n");
@@ -68,8 +102,9 @@ int new_form(){
     strcpy(list_forms[n_forms++],name);
     printw("form created sucsessfully\n");
     refresh();
-    return 1;
+    return design_form(fp);
 }
+
 
 int main_menu(){
 
@@ -82,18 +117,33 @@ int main_menu(){
         return new_form();
     else if (!(strcmp(order,"list of forms")))
         return print_forms();
+    else if (!(strcmp(order,"edit form"))){
+        //some code
+        FILE *fp;
+        return design_form(fp);}
 }
 
 
 
 int main() {
     int maxy,maxx;
-
     initscr();
-    getmaxyx(stdscr,maxy,maxx);
-    move(7*maxy/10,0);
-    read_forms();
-    while(main_menu());
+    FILE *fp= fopen("a","r");
+    read_form(fp);
+    refresh();
+//    WINDOW *win;
+//    win=newwin(100,100,10,10);
+//    WINDOW *win2=newwin(20,20,12,12);
+//    refresh();
+//    box(win,0,0);
+//    box(win2,0,0);
+//    wrefresh(win);
+//    wrefresh(win2);
+
+//    getmaxyx(stdscr,maxy,maxx);
+//    move(0*maxy/10,0);
+//    read_forms();
+//    while(main_menu());
     endwin();
     return 0;
 }
