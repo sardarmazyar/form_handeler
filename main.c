@@ -11,66 +11,64 @@
 char **list_forms;
 int n_forms=0;
 void read_form(FILE *fp){
-    int n, size_numbers[4];
-    char str[name_len];
+    int n,inside_win, size_numbers[4];
+    char str[name_len], str2[name_len];
     fscanf(fp,"%d",&n);
-    WINDOW *win[n];
-//    win[0]= newwin(5,5,0,0);
-//    refresh();
-//    box(win[0],0,0);
-//    wrefresh(win[0]);
-//    win[1]= newwin(5,5,13,17);
-//    refresh();
-//    box(win[1],0,0);
-//    wrefresh(win[1]);
-//    win[2]= newwin(20,30,1,1);
-//    refresh();
-//    box(win[2],0,0);
-//    wrefresh(win[2]);
-//    win[3]= newwin(30,40,1,1);
-//    refresh();
-//    box(win[3],0,0);
-//    wrefresh(win[3]);
+    WINDOW *win_in[n], *win_out[n];
     for (int i=0; i<n; i++){
         fscanf(fp,"%s",str);
-	    //printw("%s\n",str);
-        if (!(strcmp(str,"border")) || !(strcmp(str,"textbox")) || !(strcmp(str,"label"))){
-            fscanf(fp,"%d %d %d %d", &size_numbers[0],&size_numbers[1],&size_numbers[2],&size_numbers[3]);
-            //wprintw(win[i],"%d %d %d %d\n",size_numbers[0],size_numbers[1],size_numbers[2],size_numbers[3]);
-            win[i]= newwin(size_numbers[0],size_numbers[1],size_numbers[2],size_numbers[3]);
-            refresh();
-//            wrefresh(win[i]);
-//	        wprintw(win[i],"aaaaaaaaa\n");
-//            wrefresh(win[i]);
-//	        refresh();
-
-            fscanf(fp,"%s",str);
-            //printw("%s\n",str);
-            if (!strcmp(str,"normal")) {
-                box(win[i],0, 0);
-                move(size_numbers[2],size_numbers[3]);
-                printw(win[i],"aaaaaaaaa\n");
-                wrefresh(win[i]);
-                //wprintw(win[i],"we are in\n");
+        if (1){
+            fscanf(fp,"%d %d %d %d %d",&inside_win, &size_numbers[0],&size_numbers[1],&size_numbers[2],&size_numbers[3]);
+            if (inside_win){
+                win_in[i]= newwin(size_numbers[0],size_numbers[1],size_numbers[2],size_numbers[3]);
+                refresh();
+                fscanf(fp,"%d %d %d %d", &size_numbers[0],&size_numbers[1],&size_numbers[2],&size_numbers[3]);
             }
-            else if (!strcmp(str,"none"))
+            else
+                win_in[i]= newwin(size_numbers[0]-2,size_numbers[1]-2,size_numbers[2]+1,size_numbers[3]+1);
+            win_out[i]= newwin(size_numbers[0],size_numbers[1],size_numbers[2],size_numbers[3]);
+            refresh();
+            fscanf(fp,"%s",str2);
+            if (!strcmp(str2,"normal")) {
+                box(win_out[i],0, 0);
+            }
+            else if (!strcmp(str2,"none"))
                 ;
             else
-                box(win[i],str[0],str[0]);
+                box(win_out[i],str2[0],str2[0]);
+            wrefresh(win_out[i]);
         }
-        if (!(strcmp(str,"label"))){
-            fgets(str,name_len,fp);
-            //wprintw(win[i],str);
+        fgetc(fp);
+        if (!(strcmp(str,"button")) || !(strcmp(str,"label") )){
+            fscanf(fp,"%s",str);
+            fgetc(fp);
+            wprintw(win_in[i],"%s\n",str);
+            wrefresh(win_in[i]);
         }
-        else if (!(strcmp(str,"border"))){
-            ;
+        else if (!(strcmp(str,"combobox"))){
+            wprintw(win_in[i],"Choose one\n");
+            fscanf(fp,"%d",&n);
+            fgetc(fp);
+            for (int j=0; j<n; j++){
+                fscanf(fp,"%s",str);
+                fgetc(fp);
+//                wprintw(win_in[i],"%s\n",str);
+//                wrefresh(win_in[i]);
+            }
         }
-        else if (!(strcmp(str,"border"))){
-            ;
+        else if (!(strcmp(str,"checkbox"))){
+            fscanf(fp,"%d",&n);
+            fgetc(fp);// \n
+            for (int j=0; j<n; j++){
+                fscanf(fp,"%s",str);
+                fgetc(fp);
+                //wprintw(win_in[i],"%s\n",str);
+                //wrefresh(win_in[i]);
+            }
         }
+        getch();
     }
-
- }
+}
 void read_forms(){
     list_forms = (char**) malloc(form_len * sizeof(char*));
     for(int i=0; i<form_len; i++)
