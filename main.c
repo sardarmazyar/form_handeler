@@ -15,14 +15,44 @@ void read_form(FILE *fp){
     char str[name_len];
     fscanf(fp,"%d",&n);
     WINDOW *win[n];
+//    win[0]= newwin(5,5,0,0);
+//    refresh();
+//    box(win[0],0,0);
+//    wrefresh(win[0]);
+//    win[1]= newwin(5,5,13,17);
+//    refresh();
+//    box(win[1],0,0);
+//    wrefresh(win[1]);
+//    win[2]= newwin(20,30,1,1);
+//    refresh();
+//    box(win[2],0,0);
+//    wrefresh(win[2]);
+//    win[3]= newwin(30,40,1,1);
+//    refresh();
+//    box(win[3],0,0);
+//    wrefresh(win[3]);
     for (int i=0; i<n; i++){
-        fgets(str,name_len,fp);
-        if (!(strcmp(str,"border")) && !(strcmp(str,"textbox")) && !(strcmp(str,"label"))){
+        fscanf(fp,"%s",str);
+	    //printw("%s\n",str);
+        if (!(strcmp(str,"border")) || !(strcmp(str,"textbox")) || !(strcmp(str,"label"))){
             fscanf(fp,"%d %d %d %d", &size_numbers[0],&size_numbers[1],&size_numbers[2],&size_numbers[3]);
+            //wprintw(win[i],"%d %d %d %d\n",size_numbers[0],size_numbers[1],size_numbers[2],size_numbers[3]);
             win[i]= newwin(size_numbers[0],size_numbers[1],size_numbers[2],size_numbers[3]);
-            fgets(str,name_len,fp);
-            if (!strcmp(str,"normal"))
-                box(win[i],0,0);
+            refresh();
+//            wrefresh(win[i]);
+//	        wprintw(win[i],"aaaaaaaaa\n");
+//            wrefresh(win[i]);
+//	        refresh();
+
+            fscanf(fp,"%s",str);
+            //printw("%s\n",str);
+            if (!strcmp(str,"normal")) {
+                box(win[i],0, 0);
+                move(size_numbers[2],size_numbers[3]);
+                printw(win[i],"aaaaaaaaa\n");
+                wrefresh(win[i]);
+                //wprintw(win[i],"we are in\n");
+            }
             else if (!strcmp(str,"none"))
                 ;
             else
@@ -30,7 +60,7 @@ void read_form(FILE *fp){
         }
         if (!(strcmp(str,"label"))){
             fgets(str,name_len,fp);
-            wprintw(win[i],str);
+            //wprintw(win[i],str);
         }
         else if (!(strcmp(str,"border"))){
             ;
@@ -38,10 +68,9 @@ void read_form(FILE *fp){
         else if (!(strcmp(str,"border"))){
             ;
         }
-
-
     }
-}
+
+ }
 void read_forms(){
     list_forms = (char**) malloc(form_len * sizeof(char*));
     for(int i=0; i<form_len; i++)
@@ -100,7 +129,7 @@ int new_form(){
     fclose(fp);
     name[len -4 ]='.';
     strcpy(list_forms[n_forms++],name);
-    printw("form created sucsessfully\n");
+    printw("form created successfully\n");
     refresh();
     return design_form(fp);
 }
@@ -126,9 +155,16 @@ int main_menu(){
 
 
 int main() {
-    int maxy,maxx;
-    initscr();
-    FILE *fp= fopen("a","r");
+//    int maxy,maxx;
+  initscr();
+//    WINDOW *win= newwin(10,10,10,10);
+//    refresh();
+//    box(win,0,0);
+//    wrefresh(win);
+//    getch();
+//    endwin();
+//    return 0;
+    FILE *fp= fopen("a.txt","r");
     read_form(fp);
     refresh();
 //    WINDOW *win;
@@ -144,6 +180,7 @@ int main() {
 //    move(0*maxy/10,0);
 //    read_forms();
 //    while(main_menu());
+	getch();
     endwin();
     return 0;
 }
