@@ -1,0 +1,21 @@
+4
+border 1 8 8 1 1 10 10 0 0 normal
+label 0 10 10 0 11 *
+do:
+checkbox 0 10 10 11 0 ` 
+4
+fa
+nsdfa
+wdfasdf
+gdfa
+combobox 0 10 10 11 11 -
+3
+as
+we
+wer
+textbox 0 10 10 11 11 - 
+ 
+checkbox 0 10 10 11 11 /
+textbox 0 10 10 11 11 normal
+textbox 0 10 10 11 0 *  
+textbox 0 10 10 11 11 -  
